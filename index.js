@@ -4,6 +4,7 @@
 
   const {assign, create, defineProperty, freeze, keys, seal} = Object;
 
+  /* istanbul ignore next */
   const G = typeof self === 'object' ? self : global;
 
   const casts = create(null);
@@ -21,9 +22,7 @@
   .forEach(definition => {
     const [type] = keys(definition);
     const Class = G[definition[type]];
-    const cast = function () {
-      return typeof this === type ? this : Class(this);
-    };
+    const cast = self => typeof self === type ? self : Class(self);
     casts[type] = cast;
     defineProperty(Array.prototype, type, {get: map(cast)});
     defineProperty(Object.prototype, type, {get: fn(cast)});
@@ -38,11 +37,12 @@
   .forEach(definition => {
     const [type] = keys(definition);
     const name = definition[type];
+    /* istanbul ignore else */
     if (typeof G[name] === 'function') {
-      const cast = function () {
-        if (typeof this === type)
-          return this;
-        throw new TypeError(String(this) + ' is not a ' + name);
+      const cast = self => {
+        if (typeof self === type)
+          return self;
+        throw new TypeError(String(self) + ' is not a ' + name);
       };
       casts[type] = cast;
       defineProperty(Array.prototype, type, {get: map(cast)});
@@ -67,12 +67,10 @@
   .forEach(definition => {
     const [type] = keys(definition);
     const Class = G[definition[type]];
+    /* istanbul ignore else */
     if (typeof Class === 'function') {
       const reference = new Class(1);
-      const cast = function () {
-        reference[0] = this;
-        return reference[0];
-      };
+      const cast = self => ((reference[0] = self), reference[0]);
       casts[type] = cast;
       defineProperty(Array.prototype, type, {
         get() { return new Class(this); }
@@ -90,11 +88,8 @@
   .forEach(definition => {
     const [type] = keys(definition);
     const Class = definition[type];
-    const constructor = G[Class.slice(0, Class.indexOf('64'))];
-    if (typeof constructor === 'function' && typeof G[Class] === 'function') {
-      const cast = function () {
-        return constructor(this);
-      };
+    const cast = G[Class.slice(0, Class.indexOf('64'))];
+    if (typeof cast === 'function' && typeof G[Class] === 'function') {
       casts[type] = cast;
       defineProperty(Array.prototype, type, {get: map(cast)});
       defineProperty(Object.prototype, type, {get: fn(cast)});
@@ -110,11 +105,9 @@
   .forEach(definition => {
     const [type] = keys(definition);
     const Class = G[definition[type]];
-    const cast = function () {
-      return Class.from(this);
-    };
+    const cast =  self => Class.from(self);
     casts[type] = cast;
-    defineProperty(Array.prototype, type, {get: cast});
+    defineProperty(Array.prototype, type, {get() { return cast(this); }});
     defineProperty(Object.prototype, type, {get: fn(cast)});
     types.push(definition);
   });
@@ -124,14 +117,14 @@
   defineProperty(Array.prototype, 'struct', {get() {
     const descriptors = create(null);
     const {prototype} = Struct;
-    keys(this).forEach(definition => {
+    this.forEach(definition => {
       const [type] = keys(definition);
       const name = definition[type];
       const cast = casts[type];
       const _ = new WeakMap;
       descriptors[name] = {
         get() { return _.get(this); },
-        set(value) { _.set(this, cast.call(value)); }
+        set(value) { _.set(this, cast(value)); }
       };
     });
     freeze(prototype);
@@ -147,19 +140,19 @@
     return function () {
       return typeof this === 'function' ?
         wrapFn(cast, this) :
-        cast.call(this);
+        cast(this);
     };
   }
 
   function map(cast) {
     return function () {
-      return this.map(value => cast.call(value));
+      return this.map(cast);
     };
   }
 
   function wrapFn(cast, fn) {
     return function () {
-      return cast.call(fn.apply(this, arguments));
+      return cast(fn.apply(this, arguments));
     };
   }
 

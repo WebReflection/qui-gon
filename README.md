@@ -52,4 +52,7 @@ const p = Point({x: 0, y: 0});
 // const {returnType: name} = ({type1: name1, ...typeN: nameN}) => { ... };
 const {i32: foo} = ({i32: x}) => x * 2;
 foo(2); // 4
+
+const {i32: bar} = ({i32: x}, {i32: y}) => x * y;
+bar(3, 4); // 12
 ```
