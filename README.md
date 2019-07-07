@@ -1,5 +1,7 @@
 # Qui-Gon Jinn Script
 
+[![Build Status](https://travis-ci.com/WebReflection/qui-gon.svg?branch=master)](https://travis-ci.com/WebReflection/qui-gon) [![Coverage Status](https://coveralls.io/repos/github/WebReflection/qui-gon/badge.svg?branch=master)](https://coveralls.io/github/WebReflection/qui-gon?branch=master)
+
 Destructured types for any JS env.
 
 ```js
