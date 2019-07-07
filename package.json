@@ -1,6 +1,6 @@
 {
   "name": "qui-gon",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "main": "index.js",
   "module": "index.js",
   "unpkg": "min.js",
