@@ -1,11 +1,11 @@
 (function QuiGonJS() {'use strict';
 
-  // (c) Andrea Giammarchi
+  /*! (c) Andrea Giammarchi */
 
   const {assign, create, defineProperty, freeze, keys, seal} = Object;
 
   /* istanbul ignore next */
-  const G = typeof self === 'object' ? self : global;
+  const G = typeof(self) === 'object' ? self : global;
 
   const casts = create(null);
   const types = [];
@@ -22,7 +22,7 @@
   .forEach(definition => {
     const [type] = keys(definition);
     const Class = G[definition[type]];
-    const cast = self => typeof self === type ? self : Class(self);
+    const cast = self => typeof(self) === type ? self : Class(self);
     casts[type] = cast;
     defineProperty(Array.prototype, type, {get: map(cast)});
     defineProperty(Object.prototype, type, {get: fn(cast)});
@@ -38,9 +38,9 @@
     const [type] = keys(definition);
     const name = definition[type];
     /* istanbul ignore else */
-    if (typeof G[name] === 'function') {
+    if (typeof(G[name]) === 'function') {
       const cast = self => {
-        if (typeof self === type)
+        if (typeof(self) === type)
           return self;
         throw new TypeError(String(self) + ' is not a ' + name);
       };
@@ -68,7 +68,7 @@
     const [type] = keys(definition);
     const Class = G[definition[type]];
     /* istanbul ignore else */
-    if (typeof Class === 'function') {
+    if (typeof(Class) === 'function') {
       const reference = new Class(1);
       const cast = self => ((reference[0] = self), reference[0]);
       casts[type] = cast;
@@ -89,7 +89,7 @@
     const [type] = keys(definition);
     const Class = definition[type];
     const cast = G[Class.slice(0, Class.indexOf('64'))];
-    if (typeof cast === 'function' && typeof G[Class] === 'function') {
+    if (typeof(cast) === 'function' && typeof(G[Class]) === 'function') {
       casts[type] = cast;
       defineProperty(Array.prototype, type, {get: map(cast)});
       defineProperty(Object.prototype, type, {get: fn(cast)});
@@ -138,7 +138,7 @@
 
   function fn(cast) {
     return function () {
-      return typeof this === 'function' ?
+      return typeof(this) === 'function' ?
         wrapFn(cast, this) :
         cast(this);
     };

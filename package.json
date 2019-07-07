@@ -3,8 +3,12 @@
   "version": "0.0.0",
   "main": "index.js",
   "module": "index.js",
+  "unpkg": "min.js",
   "scripts": {
+    "build": "npm run rollup && npm run size",
     "coveralls": "cat ./coverage/lcov.info | coveralls",
+    "rollup": "rollup --config rollup.config.js",
+    "size": "cat index.js | wc -c;cat min.js | wc -c;gzip -c9 min.js | wc -c",
     "test": "istanbul cover test/index.js"
   },
   "keywords": [
@@ -16,6 +20,8 @@
   "license": "ISC",
   "devDependencies": {
     "coveralls": "^3.0.4",
-    "istanbul": "^0.4.5"
+    "istanbul": "^0.4.5",
+    "rollup": "^1.16.6",
+    "rollup-plugin-terser": "^5.1.1"
   }
 }
