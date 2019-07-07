@@ -134,6 +134,18 @@
     }
   }});
 
+  // registered struct (simple Rust structs)
+  // const {struct: Point} = {Point: [{f32: 'x'}, {f32: 'y'}]};
+  // const {Point: p} = Point(0, 0);
+  defineProperty(Object.prototype, 'struct', {get() {
+    const [type] = keys(this);
+    if (!types.includes(type)) {
+      types.push(type);
+      defineProperty(Object.prototype, type, {get() { return this; }});
+    }
+    return this[type].struct;
+  }});
+
   defineProperty(G, 'types', {value: types.map(type => keys(type)[0])});
 
   function fn(cast) {

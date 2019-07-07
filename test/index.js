@@ -38,6 +38,18 @@ console.assert(p.x === 1 && p.y === 3);
 p.x = 4.1;
 console.assert(p.x === 4);
 
+const {struct: Point3D} = {Point3D: [{f32: 'x'}, {f32: 'y'}, {f32: 'z'}]};
+const p3d = Point3D(0, 0, 0);
+console.assert(p3d.x === 0 && p3d.y === 0 && p3d.z === 0);
+
+const {Point3D: another} = Point3D(.1, .2, .3);
+console.assert(another.x === .1 && another.y === .2 && another.z === .3);
+
+const {struct: Struct} = {Point3D: [{f32: 'x'}, {f32: 'y'}, {f32: 'z'}]};
+console.assert(typeof Struct === 'function' && Struct !== Point3D);
+
+
+
 const {i32: foo} = ({i32: x}) => x * 2;
 console.assert(foo(2) === 4);
 

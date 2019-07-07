@@ -47,8 +47,11 @@ const {array: numbers} = [1, 2, '3', 4];
 // Rust basic struct
 // const {struct: Name} = [{type: "fieldName"}, ...{type: "fieldName"}];
 const {struct: Point} = [{i32: 'x'}, {i32: 'y'}];
-
 const p = Point({x: 0, y: 0});
+
+// registered struct by name
+const {struct: Point2D} = {Point2D: [{i32: 'x'}, {i32: 'y'}]};
+const p2d = Point2D(1, 2, 3);
 
 // Functions
 // const {returnType: name} = ({type1: name1, ...typeN: nameN}) => { ... };
