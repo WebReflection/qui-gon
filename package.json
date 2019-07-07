@@ -4,6 +4,7 @@
   "main": "index.js",
   "module": "index.js",
   "scripts": {
+    "coveralls": "cat ./coverage/lcov.info | coveralls",
     "test": "istanbul cover test/index.js"
   },
   "keywords": [
