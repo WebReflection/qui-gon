@@ -16,6 +16,9 @@ This is a proof of concept based on destructuring syntax and the highly dynamic 
 
 The short term goal is to evaluate the community reaction, while the long term one is to create tooling able to target WASM from a JS' subset.
 
+### Playground
+
+Live [CodePen](https://codepen.io/WebReflection/pen/wLRqMw?editors=0010) where you can test any of the following examples.
 
 
 ## Examples
