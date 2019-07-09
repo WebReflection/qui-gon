@@ -51,11 +51,11 @@ const p = Point({x: 0, y: 0});
 
 // registered struct by name
 const {struct: Point2D} = {Point2D: [{i32: 'x'}, {i32: 'y'}]};
-const p2d = Point2D(1, 2, 3);
-const {Point2D: p3} = Point(1, 2, 3);
+const p2d = Point2D({x: 1, y: 2});
+const {Point2D: p3} = Point({x: 1, y: 2});
 
 // Functions
-// const {returnType: name} = ({type1: name1, ...typeN: nameN}) => { ... };
+// const {returnType: name} = ({type1: name1}, ...{typeN: nameN}) => { ... };
 const {i32: foo} = ({i32: x}) => x * 2;
 foo(2); // 4
 

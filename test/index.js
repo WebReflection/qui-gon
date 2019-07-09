@@ -39,10 +39,10 @@ p.x = 4.1;
 console.assert(p.x === 4);
 
 const {struct: Point3D} = {Point3D: [{f32: 'x'}, {f32: 'y'}, {f32: 'z'}]};
-const p3d = Point3D(0, 0, 0);
+const p3d = Point3D({x: 0, y: 0, z: 0});
 console.assert(p3d.x === 0 && p3d.y === 0 && p3d.z === 0);
 
-const {Point3D: another} = Point3D(.1, .2, .3);
+const {Point3D: another} = Point3D({x: .1, y: .2, z: .3});
 console.assert(another.x === .1 && another.y === .2 && another.z === .3);
 
 const {struct: Struct} = {Point3D: [{f32: 'x'}, {f32: 'y'}, {f32: 'z'}]};
