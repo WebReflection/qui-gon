@@ -2,7 +2,16 @@
 
   /*! (c) Andrea Giammarchi */
 
-  const {assign, create, defineProperty, freeze, keys, seal} = Object;
+  const {
+    assign,
+    create,
+    defineProperty,
+    freeze,
+    getOwnPropertyNames,
+    keys,
+    seal,
+    setPrototypeOf
+  } = Object;
 
   /* istanbul ignore next */
   const G = typeof(self) === 'object' ? self : global;
@@ -120,9 +129,10 @@
     this.forEach(definition => {
       const [type] = keys(definition);
       const name = definition[type];
-      const cast = casts[type];
+      const cast = getCast(type);
       const _ = new WeakMap;
       descriptors[name] = {
+        enumerable: true,
         get() { return _.get(this); },
         set(value) { _.set(this, cast(value)); }
       };
@@ -139,11 +149,53 @@
   // const {Point: p} = Point(0, 0);
   defineProperty(Object.prototype, 'struct', {get() {
     const [type] = keys(this);
-    if (!types.includes(type)) {
-      types.push(type);
-      defineProperty(Object.prototype, type, {get() { return this; }});
-    }
+    register(type);
     return this[type].struct;
+  }});
+
+  //  const {enum: WebEvent} = [
+  //    'Loading',
+  //    'Loaded',
+  //    {Click: [{i64: 'x'}, {i64: 'y'}] }}
+  //  ];
+  defineProperty(Array.prototype, 'enum', {get() {
+    const Enum = create(null);
+    this.forEach(definition => {
+      if (typeof definition === 'string') {
+        Enum[definition] = Symbol(definition);
+      } else {
+        const [name] = keys(definition);
+        const assignments = [];
+        definition[name].forEach(definition => {
+          const [type] = keys(definition);
+          const name = definition[type];
+          const cast = getCast(type);
+          assignments.push({name, cast});
+        });
+        const fn = (self) => {
+          assignments.forEach(definition => {
+            const {name, cast} = definition;
+            fn[name] = cast(self[name]);
+          });
+          return fn;
+        };
+        setPrototypeOf(fn, null);
+        getOwnPropertyNames(fn).forEach(name => {
+          delete fn[name];
+        });
+        Enum[name] = fn;
+      }
+    });
+    return freeze(Enum);
+  }});
+
+  // registered enum (simple Rust enums)
+  // const {enum: Color} = {Color: ['Red', 'Green', 'Blue']};
+  // console.log(Color.Red);
+  defineProperty(Object.prototype, 'enum', {get() {
+    const [type] = keys(this);
+    register(type);
+    return this[type].enum;
   }});
 
   defineProperty(G, 'types', {value: types.map(type => keys(type)[0])});
@@ -156,10 +208,23 @@
     };
   }
 
+  function getCast(type) {
+    if (!(type in casts))
+      throw new TypeError('unknown type ' + type);
+    return casts[type];
+  }
+
   function map(cast) {
     return function () {
       return this.map(cast);
     };
+  }
+
+  function register(type) {
+    if (!types.includes(type)) {
+      types.push(type);
+      defineProperty(Object.prototype, type, {get() { return this; }});
+    }
   }
 
   function wrapFn(cast, fn) {

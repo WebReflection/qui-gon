@@ -61,4 +61,15 @@ foo(2); // 4
 
 const {i32: bar} = ({i32: x}, {i32: y}) => x * y;
 bar(3, 4); // 12
+
+// Rust like (registered) enums
+const {enum: WebEvent} = {WebEvent: [
+  'Loading',
+  'Loaded',
+  {Click: [{i32: 'x'}, {i32: 'y'}] }}
+]};
+
+const click = WebEvent.Click({x: 10, y: 23});
+click === WebEvent.Click; // true
+const {x, y} = WebEvent.Click; // x: 10, y: 23
 ```
