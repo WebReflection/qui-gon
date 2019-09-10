@@ -1,6 +1,6 @@
 (function QuiGonJS() {'use strict';
 
-  /*! (c) Andrea Giammarchi */
+  /*! (c) Andrea Giammarchi - ISC */
 
   const {
     assign,
@@ -68,6 +68,7 @@
     {i8: 'Int8Array'},
     {i16: 'Int16Array'},
     {i32: 'Int32Array'},
+    {u8: 'Uint8Array'},
     {u16: 'Uint16Array'},
     {u32: 'Uint32Array'},
     // extra Qui-Gon Jinn Script type

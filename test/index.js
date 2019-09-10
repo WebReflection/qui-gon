@@ -17,7 +17,7 @@ console.assert(typeof s === 'symbol', 'symbol s');
 
 try {
   const {symbol: nope} = 'OK';
-  console.assert(false, 'this should not happen');
+  console.assert(!!nope, 'symbol nope should not happen');
 } catch(o_O) {}
 
 const {i8: si} = 1.2;
@@ -30,8 +30,8 @@ const {array: genericArray} = [1, '2', 3];
 console.assert(genericArray.length === 3);
 
 try {
-  const {struct: Fail} = [{u8: 'nope'}];
-  console.assert(!Fail, 'this should not happen');
+  const {struct: Fail} = [{unknown: 'nope'}];
+  console.assert(!Fail, 'unknown type should not happen');
 } catch (OK) {}
 
 const {struct: Point} = [{i32: 'x'}, {i32: 'y'}];
