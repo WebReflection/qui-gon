@@ -19,20 +19,20 @@ This is a proof of concept based on destructuring syntax and the highly dynamic 
 The short term goal is to evaluate the community reaction, while the long term one is to create tooling able to target WASM from a JS' subset.
 
 
-#### Types
+### Types
 
-**Array/var types**
+#### Array/var types
 
   * Rust types: _f32_, _f64_, _i8_, _i16_, _i32_, _i64_, _u16_, _u32_, _u64_
   * JS types: _u8_, _uc8_ <sup><sub>(Uint8ClampedArray)</sub></sup>
 
-**Generics**
+#### Generics
 
   * Rust types: _enum_, _struct_
   * JS types: _array_, _boolean_, _number_, _string_, _symbol_
 
 
-**Current Limitations**
+#### Current Limitations
 
   * object literals can only represent well known structs, and structs cannot have methods.
   * closures are not working (yet), use functions instead
