@@ -16,7 +16,7 @@
   /* istanbul ignore next */
   const G = typeof(self) === 'object' ? self : global;
 
-  const casts = create(null);
+  const casts = new Map;
   const types = [];
 
   // basic primitives, casted via constructors
@@ -32,7 +32,7 @@
     const [type] = keys(definition);
     const Class = G[definition[type]];
     const cast = self => typeof(self) === type ? self : Class(self);
-    casts[type] = cast;
+    casts.set(type, cast);
     defineProperty(Array.prototype, type, {get: map(cast)});
     defineProperty(Object.prototype, type, {get: fn(cast)});
     types.push(definition);
@@ -53,7 +53,7 @@
           return self;
         throw new TypeError(String(self) + ' is not a ' + name);
       };
-      casts[type] = cast;
+      casts.set(type, cast);
       defineProperty(Array.prototype, type, {get: map(cast)});
       defineProperty(Object.prototype, type, {get: fn(cast)});
       types.push(definition);
@@ -63,6 +63,9 @@
   // Rust like primitives (plus uc8) casted via value assignment
   // const {f32: coords} = [lat, long];
   [
+    {f: 'Float32Array'},
+    {i: 'Int32Array'},
+    {u: 'Uint32Array'},
     {f32: 'Float32Array'},
     {f64: 'Float64Array'},
     {i8: 'Int8Array'},
@@ -81,7 +84,7 @@
     if (typeof(Class) === 'function') {
       const reference = new Class(1);
       const cast = self => ((reference[0] = self), reference[0]);
-      casts[type] = cast;
+      casts.set(type, cast);
       defineProperty(Array.prototype, type, {
         get() { return new Class(this); }
       });
@@ -100,7 +103,7 @@
     const Class = definition[type];
     const cast = G[Class.slice(0, Class.indexOf('64'))];
     if (typeof(cast) === 'function' && typeof(G[Class]) === 'function') {
-      casts[type] = cast;
+      casts.set(type, cast);
       defineProperty(Array.prototype, type, {get: map(cast)});
       defineProperty(Object.prototype, type, {get: fn(cast)});
       types.push(definition);
@@ -116,7 +119,7 @@
     const [type] = keys(definition);
     const Class = G[definition[type]];
     const cast =  self => Class.from(self);
-    casts[type] = cast;
+    casts.set(type, cast);
     defineProperty(Array.prototype, type, {get() { return cast(this); }});
     defineProperty(Object.prototype, type, {get: fn(cast)});
     types.push(definition);
@@ -210,9 +213,9 @@
   }
 
   function getCast(type) {
-    if (!(type in casts))
+    if (!casts.has(type))
       throw new TypeError('unknown type ' + type);
-    return casts[type];
+    return casts.get(type);
   }
 
   function map(cast) {
